@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,8 +17,7 @@ namespace Dialog
         string dataPath;
         string savePath;
         List<Work> works = new List<Work>(); //Список всех работ (в графике это дуги)
-        List<Path> pathes = new List<Path>(); //Список всех путей
-
+        List<Path> pathes = new List<Path>(); //Список всех путей        
         struct Work
         {
             public string eventStart, eventEnd;
@@ -37,7 +37,10 @@ namespace Dialog
         {
             this.dataPath = dataPath;
             this.savePath = savePath;
-        }        
+            Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
+            Debug.Listeners.Add(new TextWriterTraceListener(File.CreateText("../../Ресурсы/listener.txt")));
+            Debug.AutoFlush = true;
+        }
         /// <summary>
         /// Вычисляет критический путь с вызовом внутренних методов
         /// </summary>
@@ -58,7 +61,9 @@ namespace Dialog
             string endPos = FindEndingPos();
             foreach (Path path in pathes.Where(x => x.lastPoint == endPos)) //Проверяет все пути, конечная точка которых совпадает с концом сети
             {
+                Debug.WriteLine("Длина текущего пути: " + path.length);
                 if (path.length > maxLength) maxLength = path.length; //Вычисляет самый длинный путь из тех, что есть
+                Debug.WriteLine("Макс. длина пути: " + maxLength);
             }
             List<Path> criticalPath = new List<Path>();
             foreach (Path path in pathes.Where(x => x.length == maxLength && x.lastPoint == endPos))
@@ -90,6 +95,7 @@ namespace Dialog
         /// </summary>
         void ReadData()
         {
+            Debug.WriteLine("Путь для чтения: " + dataPath);
             if (!File.Exists(dataPath))
             {
                 MessageBox.Show("Файл не найден!");
@@ -117,6 +123,7 @@ namespace Dialog
         /// <param name="savingPath">Путь к файлу для сохранения результатов</param>
         void WriteToFile(List<Path> savingPath)
         {
+            Debug.WriteLine("Путь для записи: " + savePath);
             if (!File.Exists(savePath)) File.Create(savePath).Close();
             try
             {
@@ -157,6 +164,7 @@ namespace Dialog
                 {
                     tempStartPos = activity.eventStart;
                     countCheck++;
+                    Debug.WriteLine("Проверка начальных точек: " + countCheck);
                     if (countCheck > 1 && lastPoint != activity.eventStart)
                     {
                         MessageBox.Show("В введенных данных присутствует несколько начальных точек. Решение невозможно.");
@@ -186,6 +194,7 @@ namespace Dialog
                 {
                     tempEndPos = activity.eventEnd;
                     countCheck++;
+                    Debug.WriteLine("Проверка конечных точек: " + countCheck);
                     if (countCheck > 1 && lastPoint != activity.eventEnd)
                     {
                         MessageBox.Show("В введенных данных присутствует несколько конечных точек. Решение невозможно.");

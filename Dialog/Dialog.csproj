@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Ресурсы\listener.txt" />
     <Content Include="Ресурсы\Диаграммы\варианты.png" />
     <Content Include="Ресурсы\Диаграммы\деятельность.png" />
     <Content Include="Ресурсы\Диаграммы\классы.png" />
