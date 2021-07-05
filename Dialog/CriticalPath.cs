@@ -39,7 +39,7 @@ namespace Dialog
             this.savePath = savePath;
         }        
         /// <summary>
-        /// Вычислить критический путь.
+        /// Вычисляет критический путь с вызовом внутренних методов
         /// </summary>
         public void CalculateCriticalPath()
         {
@@ -52,13 +52,13 @@ namespace Dialog
         /// Метод поиска критического пути.
         /// </summary>
         /// <returns>Список с перечислением всех вершин</returns>
-        List<Path> FindCriticalPath() //Метод поиска критического пути
+        List<Path> FindCriticalPath()
         {
             int maxLength = 0;
             string endPos = FindEndingPos();
             foreach (Path path in pathes.Where(x => x.lastPoint == endPos)) //Проверяет все пути, конечная точка которых совпадает с концом сети
             {
-                if (path.length > maxLength) maxLength = path.length; //Вычисляет самый длинный путь из представленных
+                if (path.length > maxLength) maxLength = path.length; //Вычисляет самый длинный путь из тех, что есть
             }
             List<Path> criticalPath = new List<Path>();
             foreach (Path path in pathes.Where(x => x.length == maxLength && x.lastPoint == endPos))
@@ -70,17 +70,17 @@ namespace Dialog
         /// <summary>
         /// Метод подсчета путей.
         /// </summary>
-        void CalculatePathes() //Метод подсчета путей
+        void CalculatePathes()
         {
             foreach (Work activity in works.Where(x => x.eventStart == FindStartingPos())) //Сначала в список путей заносятся все начальные дуги
             {
                 pathes.Add(new Path { path = activity.eventStart + "--" + activity.eventEnd, lastPoint = activity.eventEnd, length = activity.time });
             }
-            for (int i = 0; i < pathes.Count; i++) //Затем программа начинает обход по всем записанным путям (в ходе выполнения цикла их количество пополняется)
+            for (int i = 0; i < pathes.Count; i++) //Затем идет обход по всем записанным путям (в ходе выполнения цикла их количество пополняется)
             {
                 foreach (Work activity in works.Where(x => x.eventStart == pathes[i].lastPoint)) //В список путей заносятся новые пути, которые исходят из проверяемого в данных момент
                 {
-                    //Таким образом в список заносятся все промежуточные пути, зато работает
+                    //Таким образом в список заносятся все промежуточные пути
                     pathes.Add(new Path { path = pathes[i].path + "--" + activity.eventEnd, lastPoint = activity.eventEnd, length = pathes[i].length + activity.time });
                 }
             }
@@ -148,7 +148,7 @@ namespace Dialog
         /// Метод поиска стартовой точки.
         /// </summary>
         /// <returns>Номер стартовой точки</returns>
-        string FindStartingPos() //Метод для поиска начальной точки
+        string FindStartingPos()
         {
             string tempStartPos = " ", lastPoint = "";
             int countCheck = 0;
@@ -177,7 +177,7 @@ namespace Dialog
         /// Метод поиска конечной точки.
         /// </summary>
         /// <returns>Номер конечной точки</returns>
-        string FindEndingPos() //Метод для поиска конечной точки
+        string FindEndingPos()
         {
             string tempEndPos = "", lastPoint = "";
             int countCheck = 0;
