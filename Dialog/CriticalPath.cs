@@ -12,18 +12,18 @@ namespace Dialog
     /// <summary>
     /// Класс решения задачи критического пути.
     /// </summary>
-    class CriticalPath
+    public class CriticalPath
     {
-        string dataPath;
+        public string dataPath;
         string savePath;
         List<Work> works = new List<Work>(); //Список всех работ (в графике это дуги)
-        List<Path> pathes = new List<Path>(); //Список всех путей        
+        public List<Path> pathes = new List<Path>(); //Список всех путей        
         struct Work
         {
             public string eventStart, eventEnd;
             public int time;
         }
-        struct Path
+        public struct Path
         {
             public string path, lastPoint;
             public int length;
@@ -55,7 +55,7 @@ namespace Dialog
         /// Метод поиска критического пути.
         /// </summary>
         /// <returns>Список с перечислением всех вершин</returns>
-        List<Path> FindCriticalPath()
+        public List<Path> FindCriticalPath()
         {
             int maxLength = 0;
             string endPos = FindEndingPos();
@@ -75,7 +75,7 @@ namespace Dialog
         /// <summary>
         /// Метод подсчета путей.
         /// </summary>
-        void CalculatePathes()
+        public void CalculatePathes()
         {
             foreach (Work activity in works.Where(x => x.eventStart == FindStartingPos())) //Сначала в список путей заносятся все начальные дуги
             {
@@ -93,7 +93,7 @@ namespace Dialog
         /// <summary>
         /// Метод считывания данных из файла.
         /// </summary>
-        void ReadData()
+        public void ReadData()
         {
             Debug.WriteLine("Путь для чтения: " + dataPath);
             if (!File.Exists(dataPath))
@@ -154,7 +154,7 @@ namespace Dialog
         /// Метод поиска стартовой точки.
         /// </summary>
         /// <returns>Номер стартовой точки</returns>
-        string FindStartingPos()
+        public string FindStartingPos()
         {
             string tempStartPos = " ", lastPoint = "";
             int countCheck = 0;
@@ -184,7 +184,7 @@ namespace Dialog
         /// Метод поиска конечной точки.
         /// </summary>
         /// <returns>Номер конечной точки</returns>
-        string FindEndingPos()
+        public string FindEndingPos()
         {
             string tempEndPos = "", lastPoint = "";
             int countCheck = 0;
