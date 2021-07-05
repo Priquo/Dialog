@@ -10,7 +10,7 @@ using System.Windows.Forms;
 namespace Dialog
 {
     /// <summary>
-    /// Класс решения задачи критического пути.
+    /// Решение задачи критического пути.
     /// </summary>
     public class CriticalPath
     {
@@ -52,28 +52,28 @@ namespace Dialog
             WriteToFile(criticalPath);
         }
         /// <summary>
-        /// Метод поиска критического пути.
+        /// Производит поиск критического пути с вызовом внутренних методов
         /// </summary>
         /// <returns>Список с перечислением всех вершин</returns>
         public List<Path> FindCriticalPath()
         {
             int maxLength = 0;
-            string endPos = FindEndingPos();
-            foreach (Path path in pathes.Where(x => x.lastPoint == endPos)) //Проверяет все пути, конечная точка которых совпадает с концом сети
+            string endPoint = FindEndingPos();
+            foreach (Path path in pathes.Where(x => x.lastPoint == endPoint)) //Проверяет все пути, конечная точка которых совпадает с концом сети
             {
                 Debug.WriteLine("Длина текущего пути: " + path.length);
                 if (path.length > maxLength) maxLength = path.length; //Вычисляет самый длинный путь из тех, что есть
                 Debug.WriteLine("Макс. длина пути: " + maxLength);
             }
             List<Path> criticalPath = new List<Path>();
-            foreach (Path path in pathes.Where(x => x.length == maxLength && x.lastPoint == endPos))
+            foreach (Path path in pathes.Where(x => x.length == maxLength && x.lastPoint == endPoint))
             {
                 criticalPath.Add(path);
             }
             return criticalPath;
         }
         /// <summary>
-        /// Метод подсчета путей.
+        /// Подсчитывает пути через обход существующих путей
         /// </summary>
         public void CalculatePathes()
         {
@@ -91,7 +91,7 @@ namespace Dialog
             }
         }
         /// <summary>
-        /// Метод считывания данных из файла.
+        /// Считывает данные из CSV=файла.
         /// </summary>
         public void ReadData()
         {
@@ -118,7 +118,7 @@ namespace Dialog
         }
 
         /// <summary>
-        /// Метод записи в файл.
+        /// Записивает в CSV-файл.
         /// </summary>
         /// <param name="savingPath">Путь к файлу для сохранения результатов</param>
         void WriteToFile(List<Path> savingPath)
@@ -131,16 +131,18 @@ namespace Dialog
                 {
                     if (savingPath.Count == 1)
                     {
-                        sw.WriteLine("Найденный критический путь имеет вид:");
+                        sw.WriteLine("Критический путь:");
                         sw.WriteLine(savingPath[0].path);
-                        sw.WriteLine("Его длина составляет: " + savingPath[0].length);
+                        sw.WriteLine("Длина пути: " + savingPath[0].length);
                     }
                     else
                     {
-                        sw.WriteLine("Найденные критические пути имеют вид:");
+                        sw.WriteLine("Критические пути:");
                         foreach (Path savPath in savingPath)
+                        {
                             sw.WriteLine(savPath.path);
-                        sw.WriteLine("Длина каждого из них составляет: " + savingPath[0].length);
+                            sw.WriteLine("Длины путей: " + savPath.length);
+                        }
                     }
                 }
             }
@@ -151,7 +153,7 @@ namespace Dialog
             }
         }
         /// <summary>
-        /// Метод поиска стартовой точки.
+        /// Производит поиск стартовой точки.
         /// </summary>
         /// <returns>Номер стартовой точки</returns>
         public string FindStartingPos()
@@ -181,7 +183,7 @@ namespace Dialog
             return tempStartPos;
         }
         /// <summary>
-        /// Метод поиска конечной точки.
+        /// Производит поиск конечной точки.
         /// </summary>
         /// <returns>Номер конечной точки</returns>
         public string FindEndingPos()
