@@ -81,10 +81,16 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Ресурсы\Диаграммы\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="Ресурсы\Диаграммы\варианты.png" />
+    <Content Include="Ресурсы\Диаграммы\деятельность.png" />
+    <Content Include="Ресурсы\Диаграммы\классы.png" />
+    <Content Include="Ресурсы\Диаграммы\компоненты.png" />
+    <Content Include="Ресурсы\Диаграммы\последовательности.png" />
+    <Content Include="Ресурсы\Диаграммы\потоки_данных.png" />
+    <Content Include="Ресурсы\Диаграммы\развертывание.png" />
+    <Content Include="Ресурсы\Диаграммы\состояние.png" />
     <Content Include="Ресурсы\Математическая модель\математическая модель.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
