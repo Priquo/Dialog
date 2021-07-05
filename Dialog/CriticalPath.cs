@@ -15,8 +15,10 @@ namespace Dialog
     {
         string readPath;
         string savePath;
+        List<Work> works = new List<Work>(); //Список всех работ (в графике это дуги)
+        List<Path> pathes = new List<Path>(); //Список всех путей
 
-        struct Activity
+        struct Work
         {
             public string eventStart, eventEnd;
             public int time;
@@ -26,7 +28,6 @@ namespace Dialog
             public string path, lastPoint;
             public int length;
         }
-
         /// <summary>
         /// Инициализирует новый экземпляр класса CriticalPath с сохранением внутренних переменных
         /// </summary>
@@ -36,11 +37,54 @@ namespace Dialog
         {
             this.readPath = readPath;
             this.savePath = savePath;
+        }        
+        /// <summary>
+        /// Вычислить критический путь.
+        /// </summary>
+        public void CalculateCriticalPath()
+        {
+            ReadData();
+            CalculatePathes();
+            var criticalPath = FindCriticalPath();
+            WriteToFile(criticalPath);
         }
-
-        List<Activity> activities = new List<Activity>(); //Список всех работ (в графике это дуги)
-        List<Path> pathes = new List<Path>(); //Список всех путей
-
+        /// <summary>
+        /// Метод поиска критического пути.
+        /// </summary>
+        /// <returns>Список с перечислением всех вершин</returns>
+        List<Path> FindCriticalPath() //Метод поиска критического пути
+        {
+            int maxLength = 0;
+            string endPos = FindEndingPos();
+            foreach (Path path in pathes.Where(x => x.lastPoint == endPos)) //Проверяет все пути, конечная точка которых совпадает с концом сети
+            {
+                if (path.length > maxLength) maxLength = path.length; //Вычисляет самый длинный путь из представленных
+            }
+            List<Path> criticalPath = new List<Path>();
+            foreach (Path path in pathes.Where(x => x.length == maxLength && x.lastPoint == endPos))
+            {
+                criticalPath.Add(path);
+            }
+            return criticalPath;
+        }
+        /// <summary>
+        /// Метод подсчета путей.
+        /// </summary>
+        void CalculatePathes() //Метод подсчета путей
+        {
+            foreach (Work activity in works.Where(x => x.eventStart == FindStartingPos())) //Сначала в список путей заносятся все начальные дуги
+            {
+                pathes.Add(new Path { path = activity.eventStart + "--" + activity.eventEnd, lastPoint = activity.eventEnd, length = activity.time });
+            }
+            for (int i = 0; i < pathes.Count; i++) //Затем программа начинает обход по всем записанным путям (в ходе выполнения цикла их количество пополняется)
+            {
+                foreach (Work activity in works.Where(x => x.eventStart == pathes[i].lastPoint)) //В список путей заносятся новые пути, которые исходят из проверяемого в данных момент
+                {
+                    //Таким образом в список заносятся все промежуточные пути, зато работает
+                    pathes.Add(new Path { path = pathes[i].path + "--" + activity.eventEnd, lastPoint = activity.eventEnd, length = pathes[i].length + activity.time });
+                }
+            }
+        }
         /// <summary>
         /// Метод считывания данных из файла.
         /// </summary>
@@ -57,7 +101,7 @@ namespace Dialog
                 foreach (var line in lines)
                 {
                     string[] str = line.Split(';');
-                    activities.Add(new Activity { eventStart = str[0], eventEnd = str[1], time = Convert.ToInt32(str[2]) });
+                    works.Add(new Work { eventStart = str[0], eventEnd = str[1], time = Convert.ToInt32(str[2]) });
                 }
             }
             catch
@@ -70,7 +114,7 @@ namespace Dialog
         /// <summary>
         /// Метод записи в файл.
         /// </summary>
-        /// <param name="savingPath"></param>
+        /// <param name="savingPath">Путь к файлу для сохранения результатов</param>
         void WriteToFile(List<Path> savingPath)
         {
             if (!File.Exists(savePath)) File.Create(savePath).Close();
@@ -100,18 +144,17 @@ namespace Dialog
                 Environment.Exit(0);
             }
         }
-
         /// <summary>
         /// Метод поиска стартовой точки.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Номер стартовой точки</returns>
         string FindStartingPos() //Метод для поиска начальной точки
         {
             string tempStartPos = " ", lastPoint = "";
             int countCheck = 0;
-            foreach (Activity activity in activities)   //Если нет таких дуг, которые бы входили в данную точку, то она начальная.
+            foreach (Work activity in works)   //Если нет таких дуг, которые бы входили в данную точку, то она начальная.
             {
-                if (activities.Where(x => x.eventEnd == activity.eventStart).Count() == 0)
+                if (works.Where(x => x.eventEnd == activity.eventStart).Count() == 0)
                 {
                     tempStartPos = activity.eventStart;
                     countCheck++;
@@ -130,18 +173,17 @@ namespace Dialog
             }
             return tempStartPos;
         }
-
         /// <summary>
         /// Метод поиска конечной точки.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Номер конечной точки</returns>
         string FindEndingPos() //Метод для поиска конечной точки
         {
             string tempEndPos = "", lastPoint = "";
             int countCheck = 0;
-            foreach (Activity activity in activities)   //Если нет таких дуг, которые бы исходили из данной точки, то она конечная.
+            foreach (Work activity in works)   //Если нет таких дуг, которые бы исходили из данной точки, то она конечная.
             {
-                if (activities.Where(x => x.eventStart == activity.eventEnd).Count() == 0)
+                if (works.Where(x => x.eventStart == activity.eventEnd).Count() == 0)
                 {
                     tempEndPos = activity.eventEnd;
                     countCheck++;
@@ -159,57 +201,7 @@ namespace Dialog
                 Environment.Exit(0);
             }
             return tempEndPos;
-        }
-
-        /// <summary>
-        /// Метод подсчета путей.
-        /// </summary>
-        void CalculatePathes() //Метод подсчета путей
-        {
-            foreach (Activity activity in activities.Where(x => x.eventStart == FindStartingPos())) //Сначала в список путей заносятся все начальные дуги
-            {
-                pathes.Add(new Path { path = activity.eventStart + "--" + activity.eventEnd, lastPoint = activity.eventEnd, length = activity.time });
-            }
-            for (int i = 0; i < pathes.Count; i++) //Затем программа начинает обход по всем записанным путям (в ходе выполнения цикла их количество пополняется)
-            {
-                foreach (Activity activity in activities.Where(x => x.eventStart == pathes[i].lastPoint)) //В список путей заносятся новые пути, которые исходят из проверяемого в данных момент
-                {
-                    //Таким образом в список заносятся все промежуточные пути, зато работает
-                    pathes.Add(new Path { path = pathes[i].path + "--" + activity.eventEnd, lastPoint = activity.eventEnd, length = pathes[i].length + activity.time });
-                }
-            }
-        }
-
-        /// <summary>
-        /// Метод поиска критического пути.
-        /// </summary>
-        /// <returns></returns>
-        List<Path> FindCriticalPath() //Метод поиска критического пути
-        {
-            int maxLength = 0;
-            string endPos = FindEndingPos();
-            foreach (Path path in pathes.Where(x => x.lastPoint == endPos)) //Проверяет все пути, конечная точка которых совпадает с концом сети
-            {
-                if (path.length > maxLength) maxLength = path.length; //Вычисляет самый длинный путь из представленных
-            }
-            List<Path> criticalPath = new List<Path>();
-            foreach (Path path in pathes.Where(x => x.length == maxLength && x.lastPoint == endPos))
-            {
-                criticalPath.Add(path);
-            }
-            return criticalPath;
-        }
-
-        /// <summary>
-        /// Вычислить критический путь.
-        /// </summary>
-        public void CalculateCriticalPath()
-        {
-            ReadData();
-            CalculatePathes();
-            var criticalPath = FindCriticalPath();
-            WriteToFile(criticalPath);
-        }
+        }                     
     }
 }
 
