@@ -76,13 +76,16 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Ресурсы\входные_данные.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Ресурсы\Диаграммы\" />
-    <Folder Include="Ресурсы\Математическая модель\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Ресурсы\Математическая модель\математическая модель.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

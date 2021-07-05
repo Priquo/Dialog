@@ -136,7 +136,6 @@ namespace Dialog
                         sw.WriteLine("Длина каждого из них составляет: " + savingPath[0].length);
                     }
                 }
-                MessageBox.Show("Решение записано в файл {0}.", savePath);
             }
             catch
             {
