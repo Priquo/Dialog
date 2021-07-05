@@ -76,6 +76,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Ресурсы\решение.csv" />
     <None Include="Ресурсы\входные_данные.csv" />
   </ItemGroup>
   <ItemGroup>
