@@ -45,7 +45,7 @@ namespace Dialog
             this.buttonDownload.Name = "buttonDownload";
             this.buttonDownload.Size = new System.Drawing.Size(191, 39);
             this.buttonDownload.TabIndex = 0;
-            this.buttonDownload.Text = "Загрузить";
+            this.buttonDownload.Text = "Загрузить входные данные";
             this.buttonDownload.UseVisualStyleBackColor = true;
             this.buttonDownload.Click += new System.EventHandler(this.buttonDownload_Click);
             // 
