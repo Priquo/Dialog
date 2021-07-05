@@ -13,7 +13,7 @@ namespace Dialog
     /// </summary>
     class CriticalPath
     {
-        string readPath;
+        string dataPath;
         string savePath;
         List<Work> works = new List<Work>(); //Список всех работ (в графике это дуги)
         List<Path> pathes = new List<Path>(); //Список всех путей
@@ -31,17 +31,17 @@ namespace Dialog
         /// <summary>
         /// Инициализирует новый экземпляр класса CriticalPath с сохранением внутренних переменных
         /// </summary>
-        /// <param name="readPath">Путь к файлу входных данных</param>
+        /// <param name="dataPath">Путь к файлу входных данных</param>
         /// <param name="savePath">Путь к файлу для сохранения результатов</param>
-        public CriticalPath(string readPath, string savePath)
+        public CriticalPath(string dataPath, string savePath)
         {
-            this.readPath = readPath;
+            this.dataPath = dataPath;
             this.savePath = savePath;
         }        
         /// <summary>
         /// Вычисляет критический путь с вызовом внутренних методов
         /// </summary>
-        public void CalculateCriticalPath()
+        public void MakeResult()
         {
             ReadData();
             CalculatePathes();
@@ -90,12 +90,12 @@ namespace Dialog
         /// </summary>
         void ReadData()
         {
-            if (!File.Exists(readPath))
+            if (!File.Exists(dataPath))
             {
                 MessageBox.Show("Файл не найден!");
                 Environment.Exit(0);
             }
-            var lines = File.ReadAllLines(readPath);
+            var lines = File.ReadAllLines(dataPath);
             try
             {
                 foreach (var line in lines)
@@ -120,7 +120,7 @@ namespace Dialog
             if (!File.Exists(savePath)) File.Create(savePath).Close();
             try
             {
-                using (StreamWriter sw = new StreamWriter(savePath, false, UnicodeEncoding.UTF8))
+                using (StreamWriter sw = new StreamWriter(savePath, false, Encoding.UTF8))
                 {
                     if (savingPath.Count == 1)
                     {
@@ -136,7 +136,7 @@ namespace Dialog
                         sw.WriteLine("Длина каждого из них составляет: " + savingPath[0].length);
                     }
                 }
-                Console.WriteLine("Решение записано в файл {0}.", savePath);
+                MessageBox.Show("Решение записано в файл {0}.", savePath);
             }
             catch
             {
@@ -160,7 +160,7 @@ namespace Dialog
                     countCheck++;
                     if (countCheck > 1 && lastPoint != activity.eventStart)
                     {
-                        MessageBox.Show("В введенных данных присутствует несколько начальных точек отсутствует. Решение невозможно.");
+                        MessageBox.Show("В введенных данных присутствует несколько начальных точек. Решение невозможно.");
                         Environment.Exit(0);
                     }
                     lastPoint = activity.eventStart;
@@ -189,7 +189,7 @@ namespace Dialog
                     countCheck++;
                     if (countCheck > 1 && lastPoint != activity.eventEnd)
                     {
-                        MessageBox.Show("В введенных данных присутствует несколько конечных точек отсутствует. Решение невозможно.");
+                        MessageBox.Show("В введенных данных присутствует несколько конечных точек. Решение невозможно.");
                         Environment.Exit(0);
                     }
                     lastPoint = activity.eventEnd;

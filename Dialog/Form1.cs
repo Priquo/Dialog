@@ -65,13 +65,13 @@ namespace Dialog
                 if ((myStream = saveFileDialog1.OpenFile()) != null)
                 {
                     myStream.Close();
-                    string path = saveFileDialog1.FileName;
-                    if (path != null && path != "")
+                    string savePath = saveFileDialog1.FileName;
+                    if (savePath != null && savePath != "")
                     {
                         try
                         {
-                            CriticalPath cp = new CriticalPath(dataPath, path);
-                            cp.CalculateCriticalPath();
+                            CriticalPath cp = new CriticalPath(dataPath, savePath);
+                            cp.MakeResult();
                             MessageBox.Show("Решение сохранено! До свидания");
                             Environment.Exit(0);
                         }
